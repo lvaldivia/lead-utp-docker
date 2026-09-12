@@ -94,7 +94,7 @@ docker rmi hello-world
 ## 3. Log in to Azure
 
 ```powershell
-az login --tenant cfcb427a-a8a7-4c4c-9ba9-f4172f896223
+az login
 ```
 
 Verify the active subscription:
@@ -102,8 +102,25 @@ Verify the active subscription:
 az account list --output table
 ```
 
-> If you get `AADSTS50076` (MFA required), set up MFA at https://aka.ms/mfasetup and retry the login.
-> If you get "No subscriptions found", run `az account clear` before a fresh `az login`.
+### Troubleshooting the login
+
+If `az login` doesn't show your subscription, or you get an error, try these in order:
+
+**"No subscriptions found" / empty `az account list`**
+```powershell
+az account clear
+az login
+```
+This clears cached (possibly stale) credentials and forces a fresh interactive login.
+
+**`AADSTS50076` — MFA required**
+Set up multi-factor authentication at https://aka.ms/mfasetup with the account you're using, then retry `az login`, making sure to complete the MFA step in the browser (don't let it close early).
+
+**Still not finding your subscription — force your own tenant**
+Every Azure account belongs to a tenant (organization), and each person's tenant ID is different — never reuse someone else's. Find yours either from the error message Azure CLI shows, or from the Azure Portal under **Azure Active Directory → Overview → Tenant ID**. Then log in explicitly against it:
+```powershell
+az login --tenant YOUR_TENANT_ID
+```
 
 ## 4. Register the required resource providers
 
